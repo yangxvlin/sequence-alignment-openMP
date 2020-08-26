@@ -7,3 +7,6 @@ COMP90025 - Parallel and Multicore Computing - 2020S2 - Assignment2A
 - ```g++ -std=c++14 seqalign.cpp -o sequential```
 - ```sequential.exe < seq.dat```
 
+#### openMP
+- ```g++ -fopenmp -std=c++14 seqalign_parallel.cpp -o parallel```
+- ```parallel.exe < seq.dat```
