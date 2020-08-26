@@ -10,3 +10,13 @@ COMP90025 - Parallel and Multicore Computing - 2020S2 - Assignment2A
 #### openMP
 - ```g++ -fopenmp -std=c++14 seqalign_parallel.cpp -o parallel```
 - ```parallel.exe < seq.dat```
+
+### spartan
+- ```sbatch sequential.slurm``` 
+- ```sbatch parallel.slurm```
+
+#### see jobs under execution
+- ```squeue -u xuliny```
+
+#### Spartan Weather Report
+- ```spartan_weather```
