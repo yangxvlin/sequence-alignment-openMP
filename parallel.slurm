@@ -1,7 +1,7 @@
 #!/bin/bash
 #
 #SBATCH --partition=physical
-#SBATCH --output=sequential-out.txt
+#SBATCH --output=parallel-out.txt
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=8
@@ -13,5 +13,5 @@
 module load gcc/10.1.0
 
 # Launch code
-g++ -std=c++14 seqalign.cpp -o sequential
-sequential.exe < seq.dat
+g++ -std=c++14 seqalign.cpp -o parallel
+parallel < seq.dat
