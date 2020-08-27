@@ -13,5 +13,5 @@
 module load gcc/10.1.0
 
 # Launch code
-g++ -std=c++14 seqalign.cpp -o parallel
+g++ -std=c++14 seqalign_parallel.cpp -o parallel
 parallel < seq.dat
