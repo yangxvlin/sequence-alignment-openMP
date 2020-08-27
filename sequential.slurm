@@ -10,7 +10,7 @@
 #SBATCH --time=0-0:10:00
 
 # Load required modules
-module load GCC/8.2.0
+module load gcc/10.1.0
 
 # Launch code
 g++ -fopenmp -std=c++14 seqalign_parallel.cpp -o parallel

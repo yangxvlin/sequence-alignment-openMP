@@ -156,7 +156,7 @@ int getMinimumPenalty(std::string x, std::string y, int pxy, int pgap,
                 }
             }
         }
-        
+
         if (i <= m && j <= n) {
             if (x[i - 1] == y[j - 1]) {
                 dp[i][j] = dp[i - 1][j - 1];
@@ -166,7 +166,7 @@ int getMinimumPenalty(std::string x, std::string y, int pxy, int pgap,
                                 dp[i][j - 1] + pgap);
             }
         }
-    }
+    
     }
 
     for (i = 0; i <= m; i++) 
