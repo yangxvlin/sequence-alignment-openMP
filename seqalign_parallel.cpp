@@ -96,11 +96,12 @@ int min3(int a, int b, int c) {
 /* All of your changes should be below this line. */
 /******************************************************************************/
 
+#define MAX(a, b) ((a) > (b) ? (a) : (b))
+
 // function to find out the minimum penalty
 // return the maximum penalty and put the aligned sequences in xans and yans
 int getMinimumPenalty(std::string x, std::string y, int pxy, int pgap,
-    int* xans, int* yans)
-{
+    int* xans, int* yans) {
     int i, j; // intialising variables
     
     int m = x.length(); // length of gene1
@@ -113,30 +114,65 @@ int getMinimumPenalty(std::string x, std::string y, int pxy, int pgap,
     // std::cout << "* Available threads: " << omp_get_num_threads() << "\n";
 
     // intialising the table
-    #pragma omp parallel for
     for (i = 0; i <= m; i++) {
         // std::cout << "* Working threads: " << omp_get_thread_num() << "\n";
         dp[i][0] = i * pgap;
+    }
+
+    for (i = 0; i <= n; i++) {
         dp[0][i] = i * pgap;
     }
 
+    for (i = 0; i <= m; i++) 
+       for (j = 0; j <= n; j++) 
+          // Prints ' ' if j != n-1 else prints '\n'           
+          std::cout << dp[i][j] << " \n"[j == n]; 
+    std::cout << ">>>> \n";
+
     // calcuting the minimum penalty
-    for (i = 1; i <= m; i++)
-    {
-        for (j = 1; j <= n; j++)
-        {
-            if (x[i - 1] == y[j - 1])
-            {
-                dp[i][j] = dp[i - 1][j - 1];
+    for (i = 1; i <= MAX(m, n)+1; i++) {
+        std::cout << "* i " << i << "\n";
+
+        for (j = 1; j < i; j++) {
+            // std::cout << "* j " << j << "\n";
+
+            if (i <= m && j <= n) {
+                if (x[i - 1] == y[j - 1]) {
+                    dp[i][j] = dp[i - 1][j - 1];
+                } else {
+                    dp[i][j] = min3(dp[i - 1][j - 1] + pxy,
+                                    dp[i - 1][j] + pgap,
+                                    dp[i][j - 1] + pgap);
+                }
             }
-            else
-            {
+
+            if (j <= m && i <= n) {
+                if (x[j - 1] == y[i - 1]) {
+                    dp[j][i] = dp[j - 1][i - 1];
+                } else {
+                    dp[j][i] = min3(dp[j - 1][i - 1] + pxy,
+                                    dp[j - 1][i] + pgap,
+                                    dp[j][i - 1] + pgap);
+                }
+            }
+        }
+        
+        if (i <= m && j <= n) {
+            if (x[i - 1] == y[j - 1]) {
+                dp[i][j] = dp[i - 1][j - 1];
+            } else {
                 dp[i][j] = min3(dp[i - 1][j - 1] + pxy,
                                 dp[i - 1][j] + pgap,
                                 dp[i][j - 1] + pgap);
             }
         }
     }
+    }
+
+    for (i = 0; i <= m; i++) 
+       for (j = 0; j <= n; j++) 
+          // Prints ' ' if j != n-1 else prints '\n'           
+          std::cout << dp[i][j] << " \n"[j == n]; 
 
     // Reconstructing the solution
     int l = n + m; // maximum possible length

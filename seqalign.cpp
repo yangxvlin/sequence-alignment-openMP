@@ -119,6 +119,12 @@ int getMinimumPenalty(std::string x, std::string y, int pxy, int pgap,
         dp[0][i] = i * pgap;
     }
 
+    for (i = 0; i <= m; i++) 
+       for (j = 0; j <= n; j++) 
+          // Prints ' ' if j != n-1 else prints '\n'           
+          std::cout << dp[i][j] << " \n"[j == n]; 
+    std::cout << ">>>> \n";
+
     // calcuting the minimum penalty
     for (i = 1; i <= m; i++)
     {
@@ -136,6 +142,11 @@ int getMinimumPenalty(std::string x, std::string y, int pxy, int pgap,
             }
         }
     }
+
+    for (i = 0; i <= m; i++) 
+       for (j = 0; j <= n; j++) 
+          // Prints ' ' if j != n-1 else prints '\n'           
+          std::cout << dp[i][j] << " \n"[j == n]; 
 
     // Reconstructing the solution
     int l = n + m; // maximum possible length
