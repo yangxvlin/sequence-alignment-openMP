@@ -13,5 +13,5 @@
 module load gcc/10.1.0
 
 # Launch code
-g++ -fopenmp -std=c++14 seqalign.cpp -o sequential
-sequential < seq.dat
+g++ -std=c++14 seqalign.cpp -o sequential
+./sequential < seq.dat
