@@ -6,6 +6,8 @@
 #include <cstring>
 #include <iostream>
 
+using namespace std;
+
 int getMinimumPenalty(std::string x, std::string y, int pxy, int pgap, int* xans, int* yans);
 
 // Return current time, for performance measurement
@@ -17,7 +19,7 @@ uint64_t GetTimeStamp() {
 
 
 // Driver code
-int main() {
+int main(){
     int misMatchPenalty;
     int gapPenalty;
     std::string gene1;
@@ -26,8 +28,8 @@ int main() {
     std::cin >> gapPenalty;
     std::cin >> gene1;
     std::cin >> gene2;
-    std::cout << "misMatchPenalty=" << misMatchPenalty << "\n";
-    std::cout << "gapPenalty=" << gapPenalty << "\n";
+    std::cout << "misMatchPenalty=" << misMatchPenalty << std::endl;
+    std::cout << "gapPenalty=" << gapPenalty << std::endl;
 
     int m = gene1.length(); // length of gene1
     int n = gene2.length(); // length of gene2
@@ -63,8 +65,8 @@ int main() {
     
     // Printing the final answer
     std::cout << "Minimum Penalty in aligning the genes = ";
-    std::cout << penalty << "\n";
-    std::cout << "The aligned genes are :\n";
+    std::cout << penalty << std::endl;
+    std::cout << "The aligned genes are :" << std::endl;
     for (i = id; i <= l; i++)
     {
         std::cout<<(char)xans[i];
@@ -81,19 +83,37 @@ int main() {
 
 int min3(int a, int b, int c) {
     if (a < b && a < c) {
-        return a;
+        return a;    
     } else if (b < a && b < c) {
         return b;
     } else {
-        return c;
+        return c;    
     }
 }
-
 
 /******************************************************************************/
 /* Do not change any lines above here.            */
 /* All of your changes should be below this line. */
 /******************************************************************************/
+
+// equivalent of  int *dp[width] = new int[height][width]
+// but works for width not known at compile time.
+// (Delete structure by  delete[] dp[0]; delete[] dp;)
+int **new2d (int width, int height)
+{
+    int **dp = new int *[width];
+    int *dp0 = new int [width * height];
+    if (!dp || !dp0)
+    {
+        std::cerr << "getMinimumPenalty: new failed" << std::endl;
+        exit(1);
+    }
+    dp[0] = dp0;
+    for (int i = 1; i < width; i++)
+        dp[i] = dp[i-1] + height;
+
+    return dp;
+}
 
 // function to find out the minimum penalty
 // return the maximum penalty and put the aligned sequences in xans and yans
@@ -106,8 +126,9 @@ int getMinimumPenalty(std::string x, std::string y, int pxy, int pgap,
     int n = y.length(); // length of gene2
     
     // table for storing optimal substructure answers
-    int dp[m+1][n+1];
-    memset((void *) dp, 0, sizeof(int) * (m + 1) * (n + 1));
+    //int dp[m+1][n+1] = {0};
+    int **dp = new2d (m+1, n+1);
+    memset (dp[0], 0, (m+1) * (n+1));
 
     // intialising the table
     for (i = 0; i <= m; i++)
@@ -136,8 +157,8 @@ int getMinimumPenalty(std::string x, std::string y, int pxy, int pgap,
             }
             else
             {
-                dp[i][j] = min3(dp[i - 1][j - 1] + pxy,
-                                dp[i - 1][j] + pgap,
+                dp[i][j] = min3(dp[i - 1][j - 1] + pxy ,
+                                dp[i - 1][j] + pgap ,
                                 dp[i][j - 1] + pgap);
             }
         }
@@ -194,5 +215,10 @@ int getMinimumPenalty(std::string x, std::string y, int pxy, int pgap,
         else yans[ypos--] = (int)'_';
     }
 
-    return dp[m][n];
+    int ret = dp[m][n];
+
+    delete[] dp[0];
+    delete[] dp;
+    
+    return ret;
 }
