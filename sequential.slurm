@@ -13,5 +13,5 @@
 module load gcc/10.1.0
 
 # Launch code
-g++ -std=c++14 seqalign.cpp -o sequential
+g++ -std=c++14 seqalign.cpp -o sequential -O3
 ./sequential < seq.dat
