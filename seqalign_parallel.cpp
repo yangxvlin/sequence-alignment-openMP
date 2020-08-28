@@ -137,9 +137,11 @@ int getMinimumPenalty(std::string x, std::string y, int pxy, int pgap,
     memset (dp[0], 0, (m+1) * (n+1));
 
     // intialising the table
+    #pragma omp parallel for
     for (i = 0; i <= m; i++) {
         dp[i][0] = i * pgap;
     }
+    #pragma omp parallel for
     for (i = 0; i <= n; i++) {
         dp[0][i] = i * pgap;
     }
