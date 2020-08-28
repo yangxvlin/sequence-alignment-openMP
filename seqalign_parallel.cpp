@@ -95,7 +95,7 @@ int min3(int a, int b, int c) {
 /* Do not change any lines above here.            */
 /* All of your changes should be below this line. */
 /******************************************************************************/
-
+#include <omp.h>
 #define MAX(a, b) ((a) > (b)) ? (a) : (b)
 #define MIN(a, b) ((a) < (b)) ? (a) : (b)
 
@@ -126,6 +126,10 @@ int **new2d (int width, int height)
 int getMinimumPenalty(std::string x, std::string y, int pxy, int pgap,
     int* xans, int* yans)
 {
+    int n_thread = omp_get_max_threads();
+    omp_set_num_threads(n_thread);
+    std::cout << "omp_get_num_threads: " << omp_get_num_threads() << "\n";
+
     int i, j; // intialising variables
     
     int m = x.length(); // length of gene1
