@@ -115,6 +115,9 @@ int **new2d (int width, int height)
     return dp;
 }
 
+// uncomment to enable debug mode
+// #define DEBUG 0
+
 // function to find out the minimum penalty
 // return the maximum penalty and put the aligned sequences in xans and yans
 int getMinimumPenalty(std::string x, std::string y, int pxy, int pgap,
@@ -140,11 +143,13 @@ int getMinimumPenalty(std::string x, std::string y, int pxy, int pgap,
         dp[0][i] = i * pgap;
     }
 
-    for (i = 0; i <= m; i++) 
-       for (j = 0; j <= n; j++) 
-          // Prints ' ' if j != n-1 else prints '\n'           
-          std::cout << dp[i][j] << " \n"[j == n]; 
-    std::cout << ">>>> \n";
+    #ifdef DEBUG
+        for (i = 0; i <= m; i++) 
+            for (j = 0; j <= n; j++) 
+                // Prints ' ' if j != n-1 else prints '\n'           
+                std::cout << dp[i][j] << " \n"[j == n]; 
+        std::cout << ">>>> \n";
+    #endif
 
     // calcuting the minimum penalty
     for (i = 1; i <= m; i++)
@@ -164,10 +169,12 @@ int getMinimumPenalty(std::string x, std::string y, int pxy, int pgap,
         }
     }
 
-    for (i = 0; i <= m; i++) 
-       for (j = 0; j <= n; j++) 
-          // Prints ' ' if j != n-1 else prints '\n'           
-          std::cout << dp[i][j] << " \n"[j == n]; 
+    #ifdef DEBUG
+        for (i = 0; i <= m; i++) 
+        for (j = 0; j <= n; j++) 
+            // Prints ' ' if j != n-1 else prints '\n'           
+            std::cout << dp[i][j] << " \n"[j == n]; 
+    #endif
 
     // Reconstructing the solution
     int l = n + m; // maximum possible length

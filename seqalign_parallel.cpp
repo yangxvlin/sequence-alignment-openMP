@@ -97,6 +97,10 @@ int min3(int a, int b, int c) {
 /******************************************************************************/
 
 #define MAX(a, b) ((a) > (b)) ? (a) : (b)
+#define MIN(a, b) ((a) < (b)) ? (a) : (b)
+
+// uncomment to enable debug mode
+// #define DEBUG 0
 
 // equivalent of  int *dp[width] = new int[height][width]
 // but works for width not known at compile time.
@@ -140,60 +144,52 @@ int getMinimumPenalty(std::string x, std::string y, int pxy, int pgap,
         dp[0][i] = i * pgap;
     }
 
-    for (i = 0; i <= m; i++) 
-       for (j = 0; j <= n; j++) 
-          // Prints ' ' if j != n-1 else prints '\n'           
-          std::cout << dp[i][j] << " \n"[j == n]; 
-    std::cout << ">>>> \n";
+    #ifdef DEBUG
+        for (i = 0; i <= m; i++) 
+            for (j = 0; j <= n; j++) 
+                // Prints ' ' if j != n-1 else prints '\n'           
+                std::cout << dp[i][j] << " \n"[j == n]; 
+        std::cout << ">>>> \n";
+    #endif
 
     // std::cout << "* m " << m << "\n";
     // std::cout << "* n " << n << "\n";
     // std::cout << "* max " << (MAX(m, n)+1) << "\n";
-    // calcuting the minimum penalty
-    int max_mn = MAX(m, n)+1;
-    for (i = 1; i <= max_mn; i++) {
-        std::cout << "* i " << i << "\n";
-
-        for (j = 1; j < i; j++) {
-            // std::cout << "* j " << j << "\n";
-
-            if (i <= m && j <= n) {
-                if (x[i - 1] == y[j - 1]) {
-                    dp[i][j] = dp[i - 1][j - 1];
-                } else {
-                    dp[i][j] = min3(dp[i - 1][j - 1] + pxy,
-                                    dp[i - 1][j] + pgap,
-                                    dp[i][j - 1] + pgap);
-                }
-            }
-
-            if (j <= m && i <= n) {
-                if (x[j - 1] == y[i - 1]) {
-                    dp[j][i] = dp[j - 1][i - 1];
-                } else {
-                    dp[j][i] = min3(dp[j - 1][i - 1] + pxy,
-                                    dp[j - 1][i] + pgap,
-                                    dp[j][i - 1] + pgap);
-                }
-            }
-        }
-
-        if (i <= m && j <= n) {
-            if (x[i - 1] == y[j - 1]) {
-                dp[i][j] = dp[i - 1][j - 1];
-            } else {
-                dp[i][j] = min3(dp[i - 1][j - 1] + pxy,
-                                dp[i - 1][j] + pgap,
-                                dp[i][j - 1] + pgap);
-            }
-        }
     
+    // calcuting the minimum penalty
+    // int row = m;
+    // int col = n;
+    // int max_mn = MAX(row, col);
+
+    for (i = 0; i <= (m + n -1); i++) {
+        // std::cout << "* i " << i << "\n";
+
+        int z1 = i < n ? 0 : i - n + 1;
+        int z2 = i < m ? 0 : i - m + 1;
+
+        // std::cout << "* num_threads " << i - z2 - z1 + 1 << "\n";
+        #pragma omp parallel for
+        for (int j = i - z2; j >= z1; --j) {
+            int dpx = j+1;
+            int dpy = i-j+1;
+            // std::cout << "* i, j " << dpx << "," << dpy << "\n";
+            if (x[dpx - 1] == y[dpy - 1]) {
+                dp[dpx][dpy] = dp[dpx - 1][dpy - 1];
+            }
+            else {
+                dp[dpx][dpy] = min3(dp[dpx - 1][dpy - 1] + pxy  ,
+                                    dp[dpx - 1][dpy]     + pgap ,
+                                    dp[dpx][dpy - 1]     + pgap);
+            }
+        }
     }
 
-    for (i = 0; i <= m; i++) 
-       for (j = 0; j <= n; j++) 
-          // Prints ' ' if j != n-1 else prints '\n'           
-          std::cout << dp[i][j] << " \n"[j == n]; 
+    #ifdef DEBUG
+        for (i = 0; i <= m; i++) 
+        for (j = 0; j <= n; j++) 
+            // Prints ' ' if j != n-1 else prints '\n'           
+            std::cout << dp[i][j] << " \n"[j == n]; 
+    #endif
 
     // Reconstructing the solution
     int l = n + m; // maximum possible length
