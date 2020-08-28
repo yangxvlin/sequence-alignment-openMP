@@ -126,9 +126,6 @@ int **new2d (int width, int height)
 int getMinimumPenalty(std::string x, std::string y, int pxy, int pgap,
     int* xans, int* yans)
 {
-    int n_thread = omp_get_max_threads();
-    omp_set_num_threads(n_thread);
-    std::cout << "omp_get_num_threads: " << omp_get_num_threads() << "\n";
 
     int i, j; // intialising variables
     
