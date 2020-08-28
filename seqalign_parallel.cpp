@@ -170,8 +170,8 @@ int getMinimumPenalty(std::string x, std::string y, int pxy, int pgap,
         int z2 = i < m ? 0 : i - m + 1;
 
         // std::cout << "* num_threads " << i - z2 - z1 + 1 << "\n";
-        #pragma omp parallel for
-        for (int j = i - z2; j >= z1; --j) {
+        #pragma omp parallel for default(none) private(j) shared(i, z1, z2, x, y, dp, pxy, pgap)
+        for (j = i - z2; j >= z1; --j) {
             int dpx = j+1;
             int dpy = i-j+1;
             // std::cout << "* i, j " << dpx << "," << dpy << "\n";
