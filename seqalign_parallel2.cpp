@@ -172,30 +172,34 @@ int getMinimumPenalty(std::string x, std::string y, int pxy, int pgap,
 
         if (i <= n) {
             #pragma omp parallel for private(j)
-            for(j = 1; j < i+1; j++) {
+            for(j = i; j > 0; j--) {
                 int dpx = i+1-j;
-                // std::cout << "* i, j " << dpx << "," << j << "\n";
-                if (x[dpx - 1] == y[j - 1]) {
-                    dp[dpx][j] = dp[dpx - 1][j - 1];
-                }
-                else {
-                    dp[dpx][j] = min3(dp[dpx - 1][j - 1] + pxy  ,
-                                        dp[dpx - 1][j]     + pgap ,
-                                        dp[dpx][j - 1]     + pgap);
+                if (dpx <= m) {
+                    // std::cout << "* i, j " << dpx << "," << j << " if \n";
+                    if (x[dpx - 1] == y[j - 1]) {
+                        dp[dpx][j] = dp[dpx - 1][j - 1];
+                    }
+                    else {
+                        dp[dpx][j] = min3(dp[dpx - 1][j - 1] + pxy  ,
+                                            dp[dpx - 1][j]     + pgap ,
+                                            dp[dpx][j - 1]     + pgap);
+                    }
                 }
             }
         } else {
             #pragma omp parallel for private(j)
             for(j = n; j >= i-m+1; j--) {
-                int dpx = i+1-j;
-                // std::cout << "* i, j " << dpx << "," << j << "\n";
-                if (x[dpx - 1] == y[j - 1]) {
-                    dp[dpx][j] = dp[dpx - 1][j - 1];
-                }
-                else {
-                    dp[dpx][j] = min3(dp[dpx - 1][j - 1] + pxy  ,
-                                        dp[dpx - 1][j]     + pgap ,
-                                        dp[dpx][j - 1]     + pgap);
+                if (j > 0) {
+                    int dpx = i+1-j;
+                    // std::cout << "* i, j " << dpx << "," << j << " else\n";
+                    if (x[dpx - 1] == y[j - 1]) {
+                        dp[dpx][j] = dp[dpx - 1][j - 1];
+                    }
+                    else {
+                        dp[dpx][j] = min3(dp[dpx - 1][j - 1] + pxy  ,
+                                            dp[dpx - 1][j]     + pgap ,
+                                            dp[dpx][j - 1]     + pgap);
+                    }
                 }
             }
         }
