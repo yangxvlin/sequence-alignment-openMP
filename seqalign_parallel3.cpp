@@ -95,12 +95,9 @@ int min3(int a, int b, int c) {
 /* Do not change any lines above here.            */
 /* All of your changes should be below this line. */
 /******************************************************************************/
-#include <omp.h>
-#define MAX(a, b) ((a) > (b)) ? (a) : (b)
-#define MIN(a, b) ((a) < (b)) ? (a) : (b)
-
-// uncomment to enable debug mode
-// #define DEBUG 0
+#include "omp.h"
+#include "assert.h"
+#include <bits/stdc++.h>
 
 // equivalent of  int *dp[width] = new int[height][width]
 // but works for width not known at compile time.
@@ -121,12 +118,14 @@ int **new2d (int width, int height)
     return dp;
 }
 
+// uncomment to enable debug mode
+// #define DEBUG 0
+
 // function to find out the minimum penalty
 // return the maximum penalty and put the aligned sequences in xans and yans
 int getMinimumPenalty(std::string x, std::string y, int pxy, int pgap,
     int* xans, int* yans)
 {
-
     int i, j; // intialising variables
     
     int m = x.length(); // length of gene1
@@ -138,13 +137,19 @@ int getMinimumPenalty(std::string x, std::string y, int pxy, int pgap,
     memset (dp[0], 0, (m+1) * (n+1));
 
     // intialising the table
-    #pragma omp parallel for
-    for (i = 0; i <= m; i++) {
+    for (i = 0; i <= m; i++)
+    {
         dp[i][0] = i * pgap;
     }
-    #pragma omp parallel for
-    for (i = 0; i <= n; i++) {
+    for (i = 0; i <= n; i++)
+    {
         dp[0][i] = i * pgap;
+    }
+
+    for (i = 1; i <= m; i++) {
+        for (j = 1; j <= n; j++) {
+            dp[i][j] = -1;
+        }
     }
 
     #ifdef DEBUG
@@ -155,51 +160,93 @@ int getMinimumPenalty(std::string x, std::string y, int pxy, int pgap,
         std::cout << ">>>> \n";
     #endif
 
-    // std::cout << "* m " << m << "\n";
-    // std::cout << "* n " << n << "\n";
-    // std::cout << "* max " << (MAX(m, n)+1) << "\n";
-    
-    // calcuting the minimum penalty
-    // int row = m;
-    // int col = n;
-    // int max_mn = MAX(row, col);
+    vector< pair<int,int> > vect;
 
     for (i = 0; i <= (m + n -1); i++) {
         // std::cout << "* i " << i << "\n";
-
         if (i <= n) {
-            #pragma omp parallel for private(j)
             for(j = i; j > 0; j--) {
                 int dpx = i+1-j;
                 if (dpx <= m) {
                     // std::cout << "* i, j " << dpx << "," << j << " if \n";
-                    if (x[dpx - 1] == y[j - 1]) {
-                        dp[dpx][j] = dp[dpx - 1][j - 1];
-                    }
-                    else {
-                        dp[dpx][j] = min3(dp[dpx - 1][j - 1] + pxy  ,
-                                            dp[dpx - 1][j]     + pgap ,
-                                            dp[dpx][j - 1]     + pgap);
-                    }
+                    vect.push_back( make_pair(dpx, j) ); 
                 }
             }
         } else {
-            #pragma omp parallel for private(j)
             for(j = n; j >= i-m+1; j--) {
                 if (j > 0) {
                     int dpx = i+1-j;
                     // std::cout << "* i, j " << dpx << "," << j << " else\n";
-                    if (x[dpx - 1] == y[j - 1]) {
-                        dp[dpx][j] = dp[dpx - 1][j - 1];
-                    }
-                    else {
-                        dp[dpx][j] = min3(dp[dpx - 1][j - 1] + pxy  ,
-                                            dp[dpx - 1][j]     + pgap ,
-                                            dp[dpx][j - 1]     + pgap);
-                    }
+                    vect.push_back( make_pair(dpx, j) ); 
                 }
             }
         }
+    }
+    
+    int n_threads = 4;
+    #pragma omp parallel num_threads(n_threads) private(i) shared(dp)
+    {
+    int id = omp_get_thread_num();
+
+    for (i = id; i < vect.size(); i += n_threads) {
+        pair<int,int> dp_xy = vect.at(i);
+        int left_x    = dp_xy.first-1, 
+            left_y    = dp_xy.second, 
+            up_x      = dp_xy.first, 
+            up_y      = dp_xy.second-1, 
+            left_up_x = dp_xy.first-1, 
+            left_up_y = dp_xy.second-1;
+
+        #pragma omp critical
+        cout << "i = " << i << "; thread: " << omp_get_thread_num() << endl;
+
+        #pragma omp critical
+        cout << "*waiting (i,j) (" << dp_xy.first << "," << dp_xy.second << ")" << endl;
+        // wait for synchronization
+        // #pragma omp flush(dp)
+        int flag = 0;
+        while (dp[left_x][left_y] == -1 || dp[up_x][up_y] == -1 || dp[left_up_x][left_up_y] == -1) {
+            if (flag == 0) {
+                #pragma omp critical
+                cout << "-1 (i,j) (" << dp_xy.first << "," << dp_xy.second << ")" << ", (left)" << dp[left_x][left_y] << ", (up)" << dp[up_x][up_y] << ", (up left)" << dp[left_up_x][left_up_y] << endl;
+                flag = 1;
+            }
+            // cout << "waiting (i,j) (" << dp_xy.first << "," << dp_xy.second << ")" << endl;
+            // #pragma omp flush(dp)
+            // if (dp[left_x][left_y] == -1) {
+            //     // #pragma omp critical
+            //     cout << "-1 (i,j) (" << dp_xy.first << "," << dp_xy.second << ")" << endl;
+            //     cout << "*-1 (i,j) (" << left_x << "," << left_y << ")" << endl;
+            // } else if (dp[up_x][up_y] == -1) {
+            //     // #pragma omp critical
+            //     cout << "-1 (i,j) (" << dp_xy.first << "," << dp_xy.second << ")" << endl;
+            //     cout << "*-1 (i,j) (" << up_x << "," << up_y << ")" << endl;
+            // } else if (dp[left_up_x][left_up_y] == -1) {
+            //     // #pragma omp critical
+            //     cout << "-1 (i,j) (" << dp_xy.first << "," << dp_xy.second << ")" << endl;
+            //     cout << "*-1 (i,j) (" << left_up_x << "," << left_up_y << ")" << endl;
+            // }
+        }
+
+        #pragma omp critical
+        cout << "  *running (i,j) (" << dp_xy.first << "," << dp_xy.second << ")" << endl;
+        
+        // #pragma omp task depend(in:dp[left_up_x][left_up_y],dp[left_x][left_y],dp[up_x][up_y]) depend(out:dp[dp_xy.first][dp_xy.second])
+        if (x[left_up_x] == y[left_up_y]) {
+            // #pragma omp flush(dp)
+            #pragma omp critical
+            dp[dp_xy.first][dp_xy.second] = dp[left_up_x][left_up_y];
+        } else {
+            // #pragma omp flush(dp)
+            #pragma omp critical
+            dp[dp_xy.first][dp_xy.second] = min3(dp[left_up_x][left_up_y] + pxy  ,
+                                                 dp[left_x][left_y]     + pgap ,
+                                                 dp[up_x][up_y]     + pgap);
+        }
+
+        #pragma omp critical
+        cout << "    *finished (i,j) (" << dp_xy.first << "," << dp_xy.second << ")" << endl;
+    }
     }
 
     #ifdef DEBUG

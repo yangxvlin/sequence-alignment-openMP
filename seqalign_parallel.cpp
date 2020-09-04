@@ -82,9 +82,9 @@ int main(){
 }
 
 int min3(int a, int b, int c) {
-    if (a < b && a < c) {
+    if (a <= b && a <= c) {
         return a;    
-    } else if (b < a && b < c) {
+    } else if (b <= a && b <= c) {
         return b;
     } else {
         return c;    
@@ -138,11 +138,11 @@ int getMinimumPenalty(std::string x, std::string y, int pxy, int pgap,
     memset (dp[0], 0, (m+1) * (n+1));
 
     // intialising the table
-    #pragma omp parallel for
+    // #pragma omp parallel for
     for (i = 0; i <= m; i++) {
         dp[i][0] = i * pgap;
     }
-    #pragma omp parallel for
+    // #pragma omp parallel for
     for (i = 0; i <= n; i++) {
         dp[0][i] = i * pgap;
     }
@@ -171,18 +171,17 @@ int getMinimumPenalty(std::string x, std::string y, int pxy, int pgap,
         int z2 = i < m ? 0 : i - m + 1;
 
         // std::cout << "* num_threads " << i - z2 - z1 + 1 << "\n";
-        #pragma omp parallel for default(none) private(j) shared(i, z1, z2, x, y, dp, pxy, pgap)
-        for (j = i - z2; j >= z1; --j) {
-            int dpx = j+1;
-            int dpy = i-j+1;
-            // std::cout << "* i, j " << dpx << "," << dpy << "\n";
-            if (x[dpx - 1] == y[dpy - 1]) {
-                dp[dpx][dpy] = dp[dpx - 1][dpy - 1];
+        #pragma omp parallel for private(j)
+        for (j = z1 + 1; j <= i - z2 + 1; j++) {
+            int dpy = i-j+2;
+            // cout << "* i, j " << j << "," << dpy << "\n";
+            if (x[j - 1] == y[dpy - 1]) {
+                dp[j][dpy] = dp[j - 1][dpy - 1];
             }
             else {
-                dp[dpx][dpy] = min3(dp[dpx - 1][dpy - 1] + pxy  ,
-                                    dp[dpx - 1][dpy]     + pgap ,
-                                    dp[dpx][dpy - 1]     + pgap);
+                dp[j][dpy] = min3(dp[j - 1][dpy - 1] + pxy  ,
+                                    dp[j - 1][dpy]     + pgap ,
+                                    dp[j][dpy - 1]     + pgap);
             }
         }
     }

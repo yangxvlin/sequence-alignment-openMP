@@ -85,6 +85,7 @@ int main(){
 /* Do not change any lines above here.            */
 /* All of your changes should be below this line. */
 /******************************************************************************/
+#include <omp.h>
 
 int min3(int a, int b, int c) {
 	if (a <= b && a <= c) {
@@ -134,32 +135,36 @@ int getMinimumPenalty(std::string x, std::string y, int pxy, int pgap,
 	memset (dp[0], 0, size);
 
 	// intialising the table
-	for (i = 0; i <= m; i++)
-	{
+	for (i = 0; i <= m; i++) {
 		dp[i][0] = i * pgap;
 	}
-	for (i = 0; i <= n; i++)
-	{
+	for (i = 0; i <= n; i++) {
 		dp[0][i] = i * pgap;
 	}
 
 	// calcuting the minimum penalty
-	for (i = 1; i <= m; i++)
-	{
-		for (j = 1; j <= n; j++)
-		{
-			if (x[i - 1] == y[j - 1])
-			{
-				dp[i][j] = dp[i - 1][j - 1];
-			}
-			else
-			{
-				dp[i][j] = min3(dp[i - 1][j - 1] + pxy ,
-						dp[i - 1][j] + pgap ,
-						dp[i][j - 1] + pgap);
-			}
+    // #pragma omp parallel
+    // {
+	for (i = 2; i <= m + n ; i++) {
+        // #pragma omp for private(j)
+		for (int j = 1, dy = i - j; j < i; j++, dy -= 1) {
+
+			std::cout << "* i, j " << j << "," << dy << " if \n";
+            if (j <= m && dy <= n) {
+				if (x[j - 1] == y[dy - 1]) {
+					dp[j][dy] = dp[j - 1][dy - 1];
+				}
+				else {
+					dp[j][dy] = min3(dp[j - 1][dy - 1] + pxy  ,
+										dp[j - 1][dy]     + pgap ,
+										dp[j][dy - 1]     + pgap);
+				}
+            }
+			
 		}
 	}
+
+    // }
 
 	// Reconstructing the solution
 	int l = n + m; // maximum possible length
