@@ -141,13 +141,13 @@ int getMinimumPenalty(std::string x, std::string y, int pxy, int pgap,
 	// memset (dp[0], 0, size);
     // cout << "123" << endl;
 	// intialising the table
-	for (i = 0; i <= m; i++) {
-		dp[i][0] = i * pgap;
-	}
-    // cout << "123" << endl;
-	for (i = 0; i <= n; i++) {
-		dp[i][i] = i * pgap;
-	}
+	// for (i = 0; i <= m; i++) {
+	// 	dp[i][0] = i * pgap;
+	// }
+    // // cout << "123" << endl;
+	// for (i = 0; i <= n; i++) {
+	// 	dp[i][i] = i * pgap;
+	// }
 
 	#ifdef DEBUG
 		cout.fill(' ');
@@ -165,53 +165,62 @@ int getMinimumPenalty(std::string x, std::string y, int pxy, int pgap,
     omp_set_num_threads(n_threads);
 
 	// calcuting the minimum penalty
-	for (int i = 2; i < row; i++) {
-        int upper = min(i, col),
-            lower = max(1, i-row);
+	for (int i = 0; i < row; i++) {
+        int upper = min(i+1, col),
+            lower = max(0,   i-row+1);
 
 		#pragma omp parallel for
 		for (int j = lower; j < upper; j++) {
-			int left_up_x  = i - 2, 
-				left_up_y  = j - 1,
-                left = i - 1;
+            if (j == 0 && i <= m) {
+                dp[i][j] = i * pgap;
+            } 
+            else if (i == j) {
+                dp[i][j] = i * pgap;
+            } else {
+                int left_up_x  = i - 2, 
+                	left_up_y  = j - 1,
+                    left = i - 1;
 
-			if (x[i - j - 1] == y[left_up_y]) {
-				dp[i][j] = dp[left_up_x][left_up_y];
-				// cout << "equal" << endl;
-			}
-			else {
-				// cout << "min" << endl;
-				// cout << dp[left_up_x][left_up_y] << " " << dp[left_x][left_y] << " " << dp[up_x][up_y] << endl;
-				dp[i][j] = min3(dp[left_up_x][left_up_y] + pxy  ,
-								dp[left][left_up_y]     + pgap ,
-								dp[left][j]     + pgap);
-			}
-            
-            // cout << "(i, j) ("<< i << ", " << j << ") my up: (i-1, j-1) (" << i-1 << ", " << j-1 << ")" << endl;
-			
-			// int left_x     = i - 1, 
-			// 	left_y     = j - 1, 
-			// 	up_x       = i - 1,  
-			// 	up_y       = j, 
-			// 	// left_up_x  = i - 2, 
-			// 	// left_up_y  = j - 1,
-			// 	original_i = i - j,
-			// 	original_j = j;
-			
-			// cout << "(" << original_i << "," << original_j << ") -> " << "(i, j) ("<< i << ", " << j << ") my up: (i-1, j-1) (" << up_x << ", " << up_y << ")" << endl;
+                if (x[i - j - 1] == y[left_up_y]) {
+                	dp[i][j] = dp[left_up_x][left_up_y];
+                	// cout << "equal" << endl;
+                }
+                else {
+                	// cout << "min" << endl;
+                	// cout << dp[left_up_x][left_up_y] << " " << dp[left_x][left_y] << " " << dp[up_x][up_y] << endl;
+                	dp[i][j] = min3(dp[left_up_x][left_up_y] + pxy  ,
+                					dp[left][left_up_y]     + pgap ,
+                					dp[left][j]     + pgap);
+                }
+                
+                // cout << "(i, j) ("<< i << ", " << j << ") my up: (i-1, j-1) (" << i-1 << ", " << j-1 << ")" << endl;
+                
+                // int left_x     = i - 1, 
+                // 	left_y     = j - 1, 
+                // 	up_x       = i - 1,  
+                // 	up_y       = j, 
+                // 	// left_up_x  = i - 2, 
+                // 	// left_up_y  = j - 1,
+                // 	original_i = i - j,
+                // 	original_j = j;
+                
+                // cout << "(" << original_i << "," << original_j << ") -> " << "(i, j) ("<< i << ", " << j << ") my up: (i-1, j-1) (" << up_x << ", " << up_y << ")" << endl;
 
-			// if (x[original_i - 1] == y[original_j - 1]) {
-			// 	dp[i][j] = dp[left_up_x][left_up_y];
-			// 	// cout << "equal" << endl;
-			// }
-			// else {
-			// 	// cout << "min" << endl;
-			// 	// cout << dp[left_up_x][left_up_y] << " " << dp[left_x][left_y] << " " << dp[up_x][up_y] << endl;
-			// 	dp[i][j] = min3(dp[left_up_x][left_up_y] + pxy  ,
-			// 					dp[left_x][left_y]     + pgap ,
-			// 					dp[up_x][up_y]     + pgap);
-			// }			
-			// cout << "(" << original_i << "," << original_j << ") -> " << "(i, j) ("<< i << ", " << j << ") my up: (i-1, j-1) (" << up_x << ", " << up_y << ")" << endl;
+                // if (x[original_i - 1] == y[original_j - 1]) {
+                // 	dp[i][j] = dp[left_up_x][left_up_y];
+                // 	// cout << "equal" << endl;
+                // }
+                // else {
+                // 	// cout << "min" << endl;
+                // 	// cout << dp[left_up_x][left_up_y] << " " << dp[left_x][left_y] << " " << dp[up_x][up_y] << endl;
+                // 	dp[i][j] = min3(dp[left_up_x][left_up_y] + pxy  ,
+                // 					dp[left_x][left_y]     + pgap ,
+                // 					dp[up_x][up_y]     + pgap);
+                // }			
+                // cout << "(" << original_i << "," << original_j << ") -> " << "(i, j) ("<< i << ", " << j << ") my up: (i-1, j-1) (" << up_x << ", " << up_y << ")" << endl;
+
+            }
+
 		}
 	}
 	
