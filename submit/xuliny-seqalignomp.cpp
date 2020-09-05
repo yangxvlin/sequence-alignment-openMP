@@ -280,8 +280,10 @@ int getMinimumPenalty(std::string x, std::string y, int pxy, int pgap,
 
 	int ret = dp[row-1][col-1];
 
-	delete[] dp[0];
-	delete[] dp;
+	for (int i=0; i < row; i++) {
+        delete[] dp[i];
+    } 
+    delete[] dp;
 	
 	return ret;
 }
