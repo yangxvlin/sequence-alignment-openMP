@@ -254,13 +254,13 @@ int getMinimumPenalty(std::string x, std::string y, int pxy, int pgap,
 			yans[ypos--] = (int)y[j - 1];
 			i--; j--;
 		}
-		else if (dp[dp_i - 1][dp_j - 1] + pgap == dp[dp_i][dp_j])
+		else if (dp[dp_i - 1][dp_j] + pgap == dp[dp_i][dp_j])
 		{
 			xans[xpos--] = (int)x[i - 1];
 			yans[ypos--] = (int)'_';
 			i--;
 		}
-		else if (dp[dp_i - 1][dp_j] + pgap == dp[dp_i][dp_j])
+		else if (dp[dp_i - 1][dp_j - 1] + pgap == dp[dp_i][dp_j])
 		{
 			xans[xpos--] = (int)'_';
 			yans[ypos--] = (int)y[j - 1];
@@ -285,6 +285,5 @@ int getMinimumPenalty(std::string x, std::string y, int pxy, int pgap,
 	
 	return ret;
 }
-
 
 // g++ -fopenmp -o xuliny-seqalignomp xuliny-seqalignomp.cpp -O3
