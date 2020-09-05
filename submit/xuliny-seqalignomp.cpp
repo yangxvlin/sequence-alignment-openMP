@@ -134,7 +134,7 @@ int getMinimumPenalty(std::string x, std::string y, int pxy, int pgap,
 	// size *= n + 1;
 	// memset (dp[0], 0, size);
 
-    int n_threads = 8;
+    int n_threads = 32;
     omp_set_num_threads(n_threads);
 
 	// intialising the table
