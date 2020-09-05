@@ -24,3 +24,11 @@ COMP90025 - Parallel and Multicore Computing - 2020S2 - Assignment2A
 
 #### Spartan Weather Report
 - ```spartan-weather```
+
+## self test
+- ```parallel7.exe < easy.dat > parallel_easy.txt```
+- ```sequential.exe < easy.dat > sequential_easy.txt```
+- ```parallel7.exe < medium.dat > parallel_medium.txt```
+- ```sequential.exe < medium.dat > sequential_medium.txt```
+- ```parallel7.exe < hard.dat > parallel_hard.txt```
+- ```sequential.exe < hard.dat > sequential_hard.txt```

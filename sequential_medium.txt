@@ -1,0 +1,2 @@
+misMatchPenalty=1
+gapPenalty=3

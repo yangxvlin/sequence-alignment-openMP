@@ -134,16 +134,17 @@ int getMinimumPenalty(std::string x, std::string y, int pxy, int pgap,
 	
 	// table for storing optimal substructure answers
     int r = m+1, col = n+1;
-	int row = col + min(col, m);
+	int row = r + n;
 	int **dp = new2d (row, col);
 	// size_t size = row;
 	// size *= col;
 	// memset (dp[0], 0, size);
-
+    // cout << "123" << endl;
 	// intialising the table
 	for (i = 0; i <= m; i++) {
 		dp[i][0] = i * pgap;
 	}
+    // cout << "123" << endl;
 	for (i = 0; i <= n; i++) {
 		dp[i][i] = i * pgap;
 	}
@@ -166,7 +167,7 @@ int getMinimumPenalty(std::string x, std::string y, int pxy, int pgap,
 	// calcuting the minimum penalty
 	for (int i = 2; i < row; i++) {
         int upper = min(i, col),
-            lower = max(1, i - min(r, col));
+            lower = max(1, i-row);
 
 		#pragma omp parallel for
 		for (int j = lower; j < upper; j++) {
