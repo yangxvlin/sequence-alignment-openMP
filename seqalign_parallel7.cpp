@@ -161,7 +161,7 @@ int getMinimumPenalty(std::string x, std::string y, int pxy, int pgap,
         cout << ">>>> \n";
     #endif
 
-    int n_threads = 4;
+    int n_threads = 8;
     omp_set_num_threads(n_threads);
 
 	// calcuting the minimum penalty
