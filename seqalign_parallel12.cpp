@@ -90,7 +90,7 @@ int main() {
 // uncomment to enable debug mode
 // #define DEBUG 0
 
-int min3(int a, int b, int c) {
+inline int min3(int a, int b, int c) {
     if (a <= b && a <= c) {
         return a;
     } else if (b <= a && b <= c) {
@@ -103,7 +103,7 @@ int min3(int a, int b, int c) {
 // equivalent of  int *dp[width] = new int[height][width]
 // but works for width not known at compile time.
 // (Delete structure by  delete[] dp[0]; delete[] dp;)
-int **new2d(int width, int height) {
+inline int **new2d(int width, int height) {
     int **dp = new int *[width];
     size_t size = width;
     size *= height;
@@ -135,10 +135,15 @@ int getMinimumPenalty(std::string x, std::string y, int pxy, int pgap,
 //	size *= n + 1;
 //	memset (dp[0], 0, size);
 
+	int n_threads = 22;
+    omp_set_num_threads(n_threads);
+
     // intialising the table
+	#pragma omp parallel for
     for (i = 0; i <= m; i++) {
         dp[i][0] = i * pgap;
     }
+	#pragma omp parallel for
     for (i = 0; i <= n; i++) {
         dp[0][i] = i * pgap;
     }
@@ -174,8 +179,7 @@ int getMinimumPenalty(std::string x, std::string y, int pxy, int pgap,
     #endif
 
     // Tile parallel
-    int n_threads = 4;
-    omp_set_num_threads(n_threads);
+    
 
     int tile_width = (int) ceil((1.0*m) / n_threads), tile_length = (int) ceil((1.0*n) / n_threads);
     int num_tile_in_width = (int) ceil((1.0*m) / tile_width);
