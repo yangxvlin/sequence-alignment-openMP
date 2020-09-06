@@ -200,7 +200,7 @@ int getMinimumPenalty(std::string x, std::string y, int pxy, int pgap,
         int count = min(line, min((num_tile_in_length - start_col), num_tile_in_width));
 
         /* Print elements of this line */
-        #pragma omp parallel for schedule(dynamic)
+        #pragma omp parallel for schedule(guided)
         for (int z = 0; z < count; z++) {
             // cout << (min(num_tile_in_width, line)-z-1)  << " " << (start_col+z)  << "->" << (min(num_tile_in_width, line)-z-1)*tile_width +1<< " " << (start_col+z)*tile_length +1<< endl;
 
