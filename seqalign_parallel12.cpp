@@ -174,7 +174,7 @@ int getMinimumPenalty(std::string x, std::string y, int pxy, int pgap,
     #endif
 
     // Tile parallel
-    int n_threads = 24;
+    int n_threads = 4;
     omp_set_num_threads(n_threads);
 
     int tile_width = (int) ceil((1.0*m) / n_threads), tile_length = (int) ceil((1.0*n) / n_threads);
@@ -312,5 +312,3 @@ int getMinimumPenalty(std::string x, std::string y, int pxy, int pgap,
 
     return ret;
 }
-
-// g++ -fopenmp -o xuliny-seqalignomp xuliny-seqalignomp.cpp -O3
