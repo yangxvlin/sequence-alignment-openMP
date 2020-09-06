@@ -174,7 +174,7 @@ int getMinimumPenalty(std::string x, std::string y, int pxy, int pgap,
     #endif
 
     // Tile parallel
-    int n_threads = 18;
+    int n_threads = 22;
     omp_set_num_threads(n_threads);
 
     int tile_width = (int) ceil((1.0*m) / n_threads), tile_length = (int) ceil((1.0*n) / n_threads);
