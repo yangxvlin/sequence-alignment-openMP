@@ -90,7 +90,7 @@ int main() {
 // uncomment to enable debug mode
 // #define DEBUG 0
 
-int min3(int a, int b, int c) {
+inline int min3(int a, int b, int c) {
     if (a <= b && a <= c) {
         return a;
     } else if (b <= a && b <= c) {
@@ -103,7 +103,7 @@ int min3(int a, int b, int c) {
 // equivalent of  int *dp[width] = new int[height][width]
 // but works for width not known at compile time.
 // (Delete structure by  delete[] dp[0]; delete[] dp;)
-int **new2d(int width, int height) {
+inline int **new2d(int width, int height) {
     int **dp = new int *[width];
     size_t size = width;
     size *= height;
@@ -174,7 +174,7 @@ int getMinimumPenalty(std::string x, std::string y, int pxy, int pgap,
     #endif
 
     // Tile parallel
-    int n_threads = 24;
+    int n_threads = 20;
     omp_set_num_threads(n_threads);
 
     int tile_width = (int) ceil((1.0*m) / n_threads), tile_length = (int) ceil((1.0*n) / n_threads);
