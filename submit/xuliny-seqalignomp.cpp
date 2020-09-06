@@ -135,10 +135,15 @@ int getMinimumPenalty(std::string x, std::string y, int pxy, int pgap,
 //	size *= n + 1;
 //	memset (dp[0], 0, size);
 
+	int n_threads = 22;
+    omp_set_num_threads(n_threads);
+
     // intialising the table
+	#pragma omp parallel for
     for (i = 0; i <= m; i++) {
         dp[i][0] = i * pgap;
     }
+	#pragma omp parallel for
     for (i = 0; i <= n; i++) {
         dp[0][i] = i * pgap;
     }
@@ -174,8 +179,7 @@ int getMinimumPenalty(std::string x, std::string y, int pxy, int pgap,
     #endif
 
     // Tile parallel
-    int n_threads = 22;
-    omp_set_num_threads(n_threads);
+    
 
     int tile_width = (int) ceil((1.0*m) / n_threads), tile_length = (int) ceil((1.0*n) / n_threads);
     int num_tile_in_width = (int) ceil((1.0*m) / tile_width);
