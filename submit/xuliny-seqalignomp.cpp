@@ -139,13 +139,16 @@ int getMinimumPenalty(std::string x, std::string y, int pxy, int pgap,
     omp_set_num_threads(n_threads);
 
     // intialising the table
-	#pragma omp parallel for
-    for (i = 0; i <= m; i++) {
-        dp[i][0] = i * pgap;
-    }
-	#pragma omp parallel for
-    for (i = 0; i <= n; i++) {
-        dp[0][i] = i * pgap;
+    #pragma omp parallel 
+    {
+        #pragma omp for nowait
+        for (i = 0; i <= m; i++) {
+            dp[i][0] = i * pgap;
+        }
+        #pragma omp for
+        for (i = 0; i <= n; i++) {
+            dp[0][i] = i * pgap;
+        }
     }
 
     // calcuting the minimum penalty
@@ -203,22 +206,20 @@ int getMinimumPenalty(std::string x, std::string y, int pxy, int pgap,
         #pragma omp parallel for
         for (int z = 0; z < count; z++) {
             // cout << (min(num_tile_in_width, line)-z-1)  << " " << (start_col+z)  << "->" << (min(num_tile_in_width, line)-z-1)*tile_width +1<< " " << (start_col+z)*tile_length +1<< endl;
-            int i0 = (min(num_tile_in_width, line)-z-1)*tile_width,
-                j0 = (start_col+z)*tile_length;  // 0 index (i, j) coordinates
 
-            int tile_i_start = i0 + 1,
-                tile_j_start = j0 + 1;  // convert to 1 indexed (i, j) coordinates; position in dp matrix
+            int tile_i_start = (min(num_tile_in_width, line)-z-1)*tile_width +1,
+                tile_j_start = (start_col+z)*tile_length +1;
 
-            for (int i = tile_i_start, i_minus_1 = i0; i < min(tile_i_start + tile_width, row); i++, i_minus_1++) {
-                for (int j = tile_j_start, j_minus_1 = j0; j < min(tile_j_start + tile_length, col); j++, j_minus_1++) {
+            for (int i = tile_i_start; i < min(tile_i_start + tile_width, row); i++) {
+                for (int j = tile_j_start; j < min(tile_j_start + tile_length, col); j++) {
                     // cout << "(i, j) ("<< i << ", " << j << ")" << endl;
 
-                    if (x[i_minus_1] == y[j_minus_1]) {
-                        dp[i][j] = dp[i_minus_1][j_minus_1];
+                    if (x[i - 1] == y[j - 1]) {
+                        dp[i][j] = dp[i - 1][j - 1];
                     } else {
-                        dp[i][j] = min3(dp[i_minus_1][j_minus_1] + pxy ,
-                                dp[i_minus_1][j] + pgap ,
-                                dp[i][j_minus_1] + pgap);
+                        dp[i][j] = min3(dp[i - 1][j - 1] + pxy ,
+                                dp[i - 1][j] + pgap ,
+                                dp[i][j - 1] + pgap);
                     }
                 }
             }
