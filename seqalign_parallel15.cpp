@@ -290,5 +290,3 @@ inline int getMinimumPenalty(std::string x, std::string y, int pxy, int pgap,
 
     return ret;
 }
-
-// g++ -fopenmp -o xuliny-seqalignomp xuliny-seqalignomp.cpp -O3

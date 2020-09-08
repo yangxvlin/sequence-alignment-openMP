@@ -146,7 +146,7 @@ int getMinimumPenalty(std::string x, std::string y, int pxy, int pgap,
             dp[i][0] = i * pgap;
         }
         #pragma omp for
-        for (i = 0; i <= n; i++) {
+        for (i = 1; i <= n; i++) {
             dp[0][i] = i * pgap;
         }
     }
