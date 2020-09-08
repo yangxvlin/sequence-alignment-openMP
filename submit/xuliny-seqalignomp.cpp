@@ -131,8 +131,43 @@ inline int getMinimumPenalty(std::string x, std::string y, int pxy, int pgap,
 
     // table for storing optimal substructure answers
     int **dp = new2d(row, col);
+//	size_t size = m + 1;
+//	size *= n + 1;
+//	memset (dp[0], 0, size);
+
 	int n_threads = 22;
     omp_set_num_threads(n_threads);
+
+    // intialising the table
+    #pragma omp parallel 
+    {
+        #pragma omp for nowait
+        for (i = 0; i <= m; i++) {
+            dp[i][0] = i * pgap;
+        }
+        #pragma omp for
+        for (i = 1; i <= n; i++) {
+            dp[0][i] = i * pgap;
+        }
+    }
+
+    // calcuting the minimum penalty
+//	for (i = 1; i <= m; i++)
+//	{
+//		for (j = 1; j <= n; j++)
+//		{
+//			if (x[i - 1] == y[j - 1])
+//			{
+//				dp[i][j] = dp[i - 1][j - 1];
+//			}
+//			else
+//			{
+//				dp[i][j] = min3(dp[i - 1][j - 1] + pxy ,
+//						dp[i - 1][j] + pgap ,
+//						dp[i][j - 1] + pgap);
+//			}
+//		}
+//	}
 
     #ifdef DEBUG
 		cout.fill(' ');
@@ -149,9 +184,9 @@ inline int getMinimumPenalty(std::string x, std::string y, int pxy, int pgap,
     // Tile parallel
     
 
-    int tile_width = (int) ceil((1.0*row) / n_threads), tile_length = (int) ceil((1.0*col) / n_threads);
-    int num_tile_in_width = (int) ceil((1.0*row) / tile_width);
-    int num_tile_in_length = (int) ceil((1.0*col) / tile_length);;
+    int tile_width = (int) ceil((1.0*m) / n_threads), tile_length = (int) ceil((1.0*n) / n_threads);
+    int num_tile_in_width = (int) ceil((1.0*m) / tile_width);
+    int num_tile_in_length = (int) ceil((1.0*n) / tile_length);;
 
     // cout << "tile_width :" << tile_width << " "<< "tile_length :" << tile_length<< endl;
     // cout << "num_tile_in_width :" << num_tile_in_width << " num_tile_in_length :" << num_tile_in_length<<endl;
@@ -165,32 +200,26 @@ inline int getMinimumPenalty(std::string x, std::string y, int pxy, int pgap,
 
         /* Get count of elements in this line. The count of elements is
            equal to minimum of line number, tile_length-start_col and num_tile_in_width */
-        int count = min3(line, (num_tile_in_length - start_col), num_tile_in_width);
+        int count = min(line, min((num_tile_in_length - start_col), num_tile_in_width));
 
         /* Print elements of this line */
         #pragma omp parallel for
         for (int z = 0; z < count; z++) {
             // cout << (min(num_tile_in_width, line)-z-1)  << " " << (start_col+z)  << "->" << (min(num_tile_in_width, line)-z-1)*tile_width +1<< " " << (start_col+z)*tile_length +1<< endl;
 
-            int tile_i_start = (min(num_tile_in_width, line)-z-1)*tile_width,
-                tile_j_start = (start_col+z)*tile_length;
+            int tile_i_start = (min(num_tile_in_width, line)-z-1)*tile_width +1,
+                tile_j_start = (start_col+z)*tile_length +1;
 
             for (int i = tile_i_start; i < min(tile_i_start + tile_width, row); i++) {
                 for (int j = tile_j_start; j < min(tile_j_start + tile_length, col); j++) {
                     // cout << "(i, j) ("<< i << ", " << j << ")" << endl;
-                    if (j == 0) {
-                        dp[i][j] = i * pgap;
-                    } 
-                    else if (i == 0) {
-                        dp[i][j] = j * pgap;
+
+                    if (x[i - 1] == y[j - 1]) {
+                        dp[i][j] = dp[i - 1][j - 1];
                     } else {
-                        if (x[i - 1] == y[j - 1]) {
-                            dp[i][j] = dp[i - 1][j - 1];
-                        } else {
-                            dp[i][j] = min3(dp[i - 1][j - 1] + pxy ,
-                                    dp[i - 1][j] + pgap ,
-                                    dp[i][j - 1] + pgap);
-                        }
+                        dp[i][j] = min3(dp[i - 1][j - 1] + pxy ,
+                                dp[i - 1][j] + pgap ,
+                                dp[i][j - 1] + pgap);
                     }
                 }
             }
@@ -268,7 +297,8 @@ inline int getMinimumPenalty(std::string x, std::string y, int pxy, int pgap,
             xans[xpos--] = (int) x[i - 1];
             yans[ypos--] = (int) '_';
             i--;
-        } else if (dp[i][j - 1] + pgap == dp[i][j]) {
+        // } else if (dp[i][j - 1] + pgap == dp[i][j]) {
+        } else {
             xans[xpos--] = (int) '_';
             yans[ypos--] = (int) y[j - 1];
             j--;
@@ -285,8 +315,8 @@ inline int getMinimumPenalty(std::string x, std::string y, int pxy, int pgap,
 
     int ret = dp[m][n];
 
-    // delete[] dp[0];
-    // delete[] dp;
+    delete[] dp[0];
+    delete[] dp;
 
     return ret;
 }
