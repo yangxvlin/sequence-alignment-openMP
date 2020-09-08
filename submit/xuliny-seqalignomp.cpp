@@ -285,8 +285,8 @@ inline int getMinimumPenalty(std::string x, std::string y, int pxy, int pgap,
 
     int ret = dp[m][n];
 
-    delete[] dp[0];
-    delete[] dp;
+    // delete[] dp[0];
+    // delete[] dp;
 
     return ret;
 }
