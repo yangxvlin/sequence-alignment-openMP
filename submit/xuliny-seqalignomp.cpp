@@ -192,7 +192,7 @@ inline int getMinimumPenalty(std::string x, std::string y, int pxy, int pgap,
     // cout << "num_tile_in_width :" << num_tile_in_width << " num_tile_in_length :" << num_tile_in_length<<endl;
 
     // There will be tile_width+COL-1 lines in the output
-    for (int line = 1; line <= (num_tile_in_width + num_tile_in_length - 1); line++) {
+    for (int line = 1; line <= (num_tile_in_width + num_tile_in_length - 1); ++line) {
         /* Get column index of the first element in this line of output.
            The index is 0 for first tile_width lines and line - tile_width for remaining
            lines  */
@@ -204,14 +204,14 @@ inline int getMinimumPenalty(std::string x, std::string y, int pxy, int pgap,
 
         /* Print elements of this line */
         #pragma omp parallel for
-        for (int z = 0; z < count; z++) {
+        for (int z = 0; z < count; ++z) {
             // cout << (min(num_tile_in_width, line)-z-1)  << " " << (start_col+z)  << "->" << (min(num_tile_in_width, line)-z-1)*tile_width +1<< " " << (start_col+z)*tile_length +1<< endl;
 
             int tile_i_start = (min(num_tile_in_width, line)-z-1)*tile_width +1,
                 tile_j_start = (start_col+z)*tile_length +1;
 
-            for (int i = tile_i_start; i < min(tile_i_start + tile_width, row); i++) {
-                for (int j = tile_j_start; j < min(tile_j_start + tile_length, col); j++) {
+            for (int i = tile_i_start; i < min(tile_i_start + tile_width, row); ++i) {
+                for (int j = tile_j_start; j < min(tile_j_start + tile_length, col); ++j) {
                     // cout << "(i, j) ("<< i << ", " << j << ")" << endl;
 
                     if (x[i - 1] == y[j - 1]) {
