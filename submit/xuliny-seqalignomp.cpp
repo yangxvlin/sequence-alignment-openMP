@@ -113,8 +113,13 @@ inline int **new2d(int width, int height) {
         exit(1);
     }
     dp[0] = dp0;
-    for (int i = 1; i < width; i++)
-        dp[i] = dp[i - 1] + height;
+    // for (int i = 1; i < width; i++)
+    //     dp[i] = dp[i - 1] + height;
+
+    #pragma omp parallel for
+    for (int i = 1; i < width-1; i++) {
+        dp[i] = dp[0] + i * height;
+    }
 
     return dp;
 }
@@ -128,6 +133,8 @@ inline int getMinimumPenalty(std::string x, std::string y, int pxy, int pgap,
     int m = x.length(); // length of gene1
     int n = y.length(); // length of gene2
     int row = m + 1, col = n + 1;
+	int n_threads = 22;
+    omp_set_num_threads(n_threads);
 
     // table for storing optimal substructure answers
     int **dp = new2d(row, col);
@@ -135,8 +142,6 @@ inline int getMinimumPenalty(std::string x, std::string y, int pxy, int pgap,
 //	size *= n + 1;
 //	memset (dp[0], 0, size);
 
-	int n_threads = 22;
-    omp_set_num_threads(n_threads);
 
     // intialising the table
     #pragma omp parallel 
