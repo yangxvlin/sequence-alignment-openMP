@@ -151,23 +151,6 @@ inline int getMinimumPenalty(std::string x, std::string y, int pxy, int pgap,
         }
     }
 
-    // calcuting the minimum penalty
-//	for (i = 1; i <= m; i++)
-//	{
-//		for (j = 1; j <= n; j++)
-//		{
-//			if (x[i - 1] == y[j - 1])
-//			{
-//				dp[i][j] = dp[i - 1][j - 1];
-//			}
-//			else
-//			{
-//				dp[i][j] = min3(dp[i - 1][j - 1] + pxy ,
-//						dp[i - 1][j] + pgap ,
-//						dp[i][j - 1] + pgap);
-//			}
-//		}
-//	}
 
     #ifdef DEBUG
 		cout.fill(' ');
@@ -181,15 +164,14 @@ inline int getMinimumPenalty(std::string x, std::string y, int pxy, int pgap,
         cout << ">>>> \n";
     #endif
 
-    // Tile parallel
+    // calcuting the minimum penalty
     
+    // Tile parallel
     int n_parallel = n_threads + 7;
+    // calculate tile size
     int tile_width = (int) ceil((1.0*m) / n_parallel), tile_length = (int) ceil((1.0*n) / n_parallel);
     int num_tile_in_width = (int) ceil((1.0*m) / tile_width);
     int num_tile_in_length = (int) ceil((1.0*n) / tile_length);;
-
-    // cout << "tile_width :" << tile_width << " "<< "tile_length :" << tile_length<< endl;
-    // cout << "num_tile_in_width :" << num_tile_in_width << " num_tile_in_length :" << num_tile_in_length<<endl;
 
     // There will be tile_width+COL-1 lines in the output
     for (int line = 1; line <= (num_tile_in_width + num_tile_in_length - 1); line++) {
@@ -202,17 +184,15 @@ inline int getMinimumPenalty(std::string x, std::string y, int pxy, int pgap,
            equal to minimum of line number, tile_length-start_col and num_tile_in_width */
         int count = min(line, min((num_tile_in_length - start_col), num_tile_in_width));
 
-        /* Print elements of this line */
+        // parallel each tile
         #pragma omp parallel for
         for (int z = 0; z < count; z++) {
-            // cout << (min(num_tile_in_width, line)-z-1)  << " " << (start_col+z)  << "->" << (min(num_tile_in_width, line)-z-1)*tile_width +1<< " " << (start_col+z)*tile_length +1<< endl;
-
             int tile_i_start = (min(num_tile_in_width, line)-z-1)*tile_width +1,
                 tile_j_start = (start_col+z)*tile_length +1;
 
+            // sequential calculate cells in tile
             for (int i = tile_i_start; i < min(tile_i_start + tile_width, row); i++) {
                 for (int j = tile_j_start; j < min(tile_j_start + tile_length, col); j++) {
-                    // cout << "(i, j) ("<< i << ", " << j << ")" << endl;
 
                     if (x[i - 1] == y[j - 1]) {
                         dp[i][j] = dp[i - 1][j - 1];
@@ -223,22 +203,13 @@ inline int getMinimumPenalty(std::string x, std::string y, int pxy, int pgap,
                     }
                 }
             }
-            // cout << "tile end" << endl;
-
-
-            // cout << (min(num_tile_in_width, line)-j-1)  << " " << (start_col+j)  << "->" << (min(num_tile_in_width, line)-j-1)*tile_width +1<< " " << (start_col+j)*tile_length +1<< endl;
         }
-//            printf("%5d ", matrix[minu(tile_width, line)-j-1][start_col+j]);
-
-        /* Ptint elements of next diagonal on next line */
-//        printf("\n");
     }
 
     #ifdef DEBUG
 		cout.fill(' ');
         for (i = 0; i < row; i++) {
-            for (j = 0; j < col; j++) {
-                // Prints ' ' if j != n-1 else prints '\n'           
+            for (j = 0; j < col; j++) {         
                 cout << setw(3) << dp[i][j] << " "; 
 			}
 			cout << "\n";
@@ -246,31 +217,6 @@ inline int getMinimumPenalty(std::string x, std::string y, int pxy, int pgap,
         cout << ">>>> \n";
     #endif
 
-//    for (i = 1; i <= (tile_width + tile_length - 1); i++) {
-//        // std::cout << "* i " << i << "\n";
-//        int z1 = i < tile_length ? 0 : i - tile_length + 1;
-//        int z2 = i < tile_width ? 0 : i - tile_width + 1;
-//        // std::cout << "* num_threads " << i - z2 - z1 + 1 << "\n";
-////#pragma omp parallel for private(j)
-//        for (j = z1 + 1; j <= i - z2 + 1; j++) {
-//            int dpy = i - j + 2;
-//            cout << i * tile_width << " " << dpy * tile_length << endl;
-//        }
-//    }
-
-
-//    for (int ii = 1; ii < row; ii += tile_width) {
-//        // pragma for
-//        for (int jj = 1; jj < col; jj += tile_length) {
-//            // Go over each block sequentially
-//            for (int i = ii; i < min(ii + tile_width, row); i++) {
-//                for (int j = jj; j < min(jj + tile_length, col); j++) {
-//
-//                }
-//            }
-//        }
-//    }
-    // exit(1);
     // Reconstructing the solution
     int l = n + m; // maximum possible length
 
