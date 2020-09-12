@@ -174,6 +174,7 @@ inline int getMinimumPenalty(std::string x, std::string y, int pxy, int pgap,
     int num_tile_in_width = (int) ceil((1.0*m) / tile_width);
     int num_tile_in_length = (int) ceil((1.0*n) / tile_length);
 
+    // modified from: https://www.geeksforgeeks.org/zigzag-or-diagonal-traversal-of-matrix/
     // There will be tile_width + num_tile_in_length-1 lines in the output
     for (int line = 1; line <= (num_tile_in_width + num_tile_in_length - 1); line++) {
         /* Get column index of the first element in this line of output.
