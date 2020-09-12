@@ -184,7 +184,7 @@ inline int getMinimumPenalty(std::string x, std::string y, int pxy, int pgap,
            equal to minimum of line number, num_tile_in_length-start_col and num_tile_in_width */
         int count = min(line, min((num_tile_in_length - start_col), num_tile_in_width));
 
-        // parallel each tile
+        // parallel each tile on anti-diagonal
         #pragma omp parallel for
         for (int z = 0; z < count; z++) {
             int tile_i_start = (min(num_tile_in_width, line)-z-1)*tile_width +1,
