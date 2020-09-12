@@ -167,11 +167,11 @@ inline int getMinimumPenalty(std::string x, std::string y, int pxy, int pgap,
     // calcuting the minimum penalty
     
     // Tile parallel
-    int n_parallel = n_threads + 5;
+    int n_parallel = n_threads + 7;
     // calculate tile size
-    int tile_width  = 1, //(int) ceil((1.0*m) / n_parallel), 
+    int tile_width  = (int) ceil((1.0*m) / n_parallel), 
         tile_length = (int) ceil((1.0*n) / n_parallel);
-    int num_tile_in_width = m; //(int) ceil((1.0*m) / tile_width);
+    int num_tile_in_width = (int) ceil((1.0*m) / tile_width);
     int num_tile_in_length = (int) ceil((1.0*n) / tile_length);
 
     // There will be tile_width + num_tile_in_length-1 lines in the output
