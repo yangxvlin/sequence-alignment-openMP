@@ -173,7 +173,7 @@ inline int getMinimumPenalty(std::string x, std::string y, int pxy, int pgap,
     int num_tile_in_width = (int) ceil((1.0*m) / tile_width);
     int num_tile_in_length = (int) ceil((1.0*n) / tile_length);;
 
-    // There will be tile_width+COL-1 lines in the output
+    // There will be tile_width + num_tile_in_length-1 lines in the output
     for (int line = 1; line <= (num_tile_in_width + num_tile_in_length - 1); line++) {
         /* Get column index of the first element in this line of output.
            The index is 0 for first tile_width lines and line - tile_width for remaining
@@ -181,7 +181,7 @@ inline int getMinimumPenalty(std::string x, std::string y, int pxy, int pgap,
         int start_col = max(0, line - num_tile_in_width);
 
         /* Get count of elements in this line. The count of elements is
-           equal to minimum of line number, tile_length-start_col and num_tile_in_width */
+           equal to minimum of line number, num_tile_in_length-start_col and num_tile_in_width */
         int count = min(line, min((num_tile_in_length - start_col), num_tile_in_width));
 
         // parallel each tile
