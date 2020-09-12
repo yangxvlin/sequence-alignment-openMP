@@ -113,13 +113,8 @@ inline int **new2d(int width, int height) {
         exit(1);
     }
     dp[0] = dp0;
-    // for (int i = 1; i < width; i++)
-    //     dp[i] = dp[i - 1] + height;
-
-    #pragma omp parallel for
-    for (int i = 1; i < width-1; i++) {
-        dp[i] = dp[0] + i * height;
-    }
+    for (int i = 1; i < width; i++)
+        dp[i] = dp[i - 1] + height;
 
     return dp;
 }
@@ -286,27 +281,34 @@ inline int getMinimumPenalty(std::string x, std::string y, int pxy, int pgap,
     int ypos = l;
 
     while (!(i == 0 || j == 0)) {
-        // cout << "(i, j) ("<< i << ", " << j << ")" << endl;
 
         if (x[i - 1] == y[j - 1]) {
-            xans[xpos--] = (int) x[i - 1];
-            yans[ypos--] = (int) y[j - 1];
-            i--;
-            j--;
+            xans[xpos--] = (int) x[--i];
+            yans[ypos--] = (int) y[--j];
+            // xans[xpos--] = (int) x[i - 1];
+            // yans[ypos--] = (int) y[j - 1];
+            // i--;
+            // j--;
         } else if (dp[i - 1][j - 1] + pxy == dp[i][j]) {
-            xans[xpos--] = (int) x[i - 1];
-            yans[ypos--] = (int) y[j - 1];
-            i--;
-            j--;
+            xans[xpos--] = (int) x[--i];
+            yans[ypos--] = (int) y[--j];
+            // xans[xpos--] = (int) x[i - 1];
+            // yans[ypos--] = (int) y[j - 1];
+            // i--;
+            // j--;
         } else if (dp[i - 1][j] + pgap == dp[i][j]) {
-            xans[xpos--] = (int) x[i - 1];
+            xans[xpos--] = (int) x[--i];
             yans[ypos--] = (int) '_';
-            i--;
+            // xans[xpos--] = (int) x[i - 1];
+            // yans[ypos--] = (int) '_';
+            // i--;
         // } else if (dp[i][j - 1] + pgap == dp[i][j]) {
         } else {
             xans[xpos--] = (int) '_';
-            yans[ypos--] = (int) y[j - 1];
-            j--;
+            yans[ypos--] = (int) y[--j];
+            // xans[xpos--] = (int) '_';
+            // yans[ypos--] = (int) y[j - 1];
+            // j--;
         }
     }
     while (xpos > 0) {
