@@ -5,6 +5,15 @@ COMP90025 - Parallel and Multicore Computing - 2020S2 - Assignment2A
 - ```cd submit```
 - ```/data/gpfs/projects/punim0520/pmc/pub/bin/handin seqalignomp xuliny-seqalignomp.cpp```
 
+## result
+- <img src="./docs/code result.png"/>
+- <img src="./docs/ranking.png"/>
+### class ranking distribution
+- <img src="./docs/1.png"/>
+- <img src="./docs/2.png"/>
+- <img src="./docs/3.png"/>
+- <img src="./docs/4.png"/>
+
 ## how to run
 ### windows
 #### sequential
