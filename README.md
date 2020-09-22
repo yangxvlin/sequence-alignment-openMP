@@ -7,6 +7,8 @@ COMP90025 - Parallel and Multicore Computing - 2020S2 - Assignment2A
 
 ## result
 - <img src="./docs/code result.png"/>
+- <img src="./docs/report result.png"/>
+- Finally, 8.2 out of 10
 - <img src="./docs/ranking.png"/>
 ### class ranking distribution
 - <img src="./docs/1.png"/>
