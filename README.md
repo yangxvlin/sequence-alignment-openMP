@@ -15,6 +15,7 @@ COMP90025 - Parallel and Multicore Computing - 2020S2 - Assignment2A
 - <img src="./docs/2.png"/>
 - <img src="./docs/3.png"/>
 - <img src="./docs/4.png"/>
+- <img src="./docs/results cutoff.png"/>
 
 ## how to run
 ### windows
