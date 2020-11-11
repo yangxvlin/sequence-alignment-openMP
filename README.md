@@ -1,9 +1,14 @@
 # sequence-alignment-openMP
 COMP90025 - Parallel and Multicore Computing - 2020S2 - Assignment2A
 
-## submit
-- ```cd submit```
-- ```/data/gpfs/projects/punim0520/pmc/pub/bin/handin seqalignomp xuliny-seqalignomp.cpp```
+## specification
+- [specification](./docs/Project2A.pdf)
+
+## report
+- [report](./docs/COMP90025_Assignment_02a.pdf)
+
+## code submission
+- [code](./submit/xuliny-seqalignomp.cpp)
 
 ## result
 - <img src="./docs/code result.png"/>
@@ -16,6 +21,10 @@ COMP90025 - Parallel and Multicore Computing - 2020S2 - Assignment2A
 - <img src="./docs/3.png"/>
 - <img src="./docs/4.png"/>
 - <img src="./docs/results cutoff.png"/>
+
+## submit
+- ```cd submit```
+- ```/data/gpfs/projects/punim0520/pmc/pub/bin/handin seqalignomp xuliny-seqalignomp.cpp```
 
 ## how to run
 ### windows
